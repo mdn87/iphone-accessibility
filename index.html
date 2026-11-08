@@ -1,0 +1,483 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>iPhone Accessibility Options</title>
+<style>
+  :root {
+    color-scheme: light;
+    --bg: #f6f4ef;
+    --surface: #ffffff;
+    --surface-2: #eeece6;
+    --fg: #1d1d1f;
+    --muted: #6e6e73;
+    --link: #0a64c2;
+    --accent: #0a64c2;
+    --accent-soft: rgba(10, 100, 194, .10);
+    --rule: #e2e0da;
+    --chip-bg: #edebe5;
+    --chip-fg: #4b4b50;
+    --glass: rgba(246, 244, 239, .80);
+    --shadow: 0 1px 2px rgba(0, 0, 0, .04), 0 10px 28px -14px rgba(0, 0, 0, .20);
+    --shadow-hover: 0 2px 4px rgba(0, 0, 0, .05), 0 18px 36px -16px rgba(0, 0, 0, .28);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      color-scheme: dark;
+      --bg: #121214;
+      --surface: #1c1c1f;
+      --surface-2: #232327;
+      --fg: #f2f2f2;
+      --muted: #a1a1a6;
+      --link: #5eaaf5;
+      --accent: #5eaaf5;
+      --accent-soft: rgba(94, 170, 245, .14);
+      --rule: #2e2e33;
+      --chip-bg: #2a2a2f;
+      --chip-fg: #c8c8cd;
+      --glass: rgba(18, 18, 20, .74);
+      --shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 10px 28px -14px rgba(0, 0, 0, .7);
+      --shadow-hover: 0 2px 4px rgba(0, 0, 0, .5), 0 18px 36px -16px rgba(0, 0, 0, .8);
+    }
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --bg: #121214;
+    --surface: #1c1c1f;
+    --surface-2: #232327;
+    --fg: #f2f2f2;
+    --muted: #a1a1a6;
+    --link: #5eaaf5;
+    --accent: #5eaaf5;
+    --accent-soft: rgba(94, 170, 245, .14);
+    --rule: #2e2e33;
+    --chip-bg: #2a2a2f;
+    --chip-fg: #c8c8cd;
+    --glass: rgba(18, 18, 20, .74);
+    --shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 10px 28px -14px rgba(0, 0, 0, .7);
+    --shadow-hover: 0 2px 4px rgba(0, 0, 0, .5), 0 18px 36px -16px rgba(0, 0, 0, .8);
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: radial-gradient(900px 420px at 50% -120px, var(--accent-soft), transparent 70%), var(--bg);
+    color: var(--fg);
+    font: 16px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI Variable Text", "Segoe UI", system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: var(--link); text-underline-offset: 2px; text-decoration-color: color-mix(in srgb, var(--link) 40%, transparent); }
+  a:hover { text-decoration-color: var(--link); }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 6px; }
+  [hidden] { display: none !important; }
+  .wrap { max-width: 980px; margin: 0 auto; padding: 0 20px; }
+  .sprite { position: absolute; width: 0; height: 0; overflow: hidden; }
+  svg { fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+
+  /* Hero */
+  .hero { padding: 44px 0 18px; }
+  .titlebar { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+  .eyebrow { color: var(--muted); font-size: 12.5px; letter-spacing: .09em; text-transform: uppercase; margin: 0 0 6px; }
+  h1 { font-size: clamp(30px, 5vw, 42px); line-height: 1.08; letter-spacing: -.022em; margin: 0 0 12px; }
+  .note { color: var(--muted); max-width: 64ch; margin: 0 0 20px; font-size: 15px; }
+  .note .tag { vertical-align: 1px; }
+
+  .seg { display: inline-flex; align-items: center; background: var(--surface-2); border: 1px solid var(--rule); border-radius: 999px; padding: 3px; gap: 2px; margin-top: 6px; }
+  .seg button {
+    appearance: none; border: 0; background: transparent; color: var(--muted); font: inherit; font-size: 13px;
+    padding: 5px 11px; border-radius: 999px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;
+  }
+  .seg button[aria-pressed="true"] { background: var(--surface); color: var(--fg); box-shadow: 0 1px 2px rgba(0, 0, 0, .14); }
+  .seg svg { width: 14px; height: 14px; }
+
+  .tools { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+  .search { position: relative; flex: 1 1 280px; max-width: 480px; display: flex; align-items: center; }
+  .search .mag { position: absolute; left: 12px; width: 16px; height: 16px; color: var(--muted); pointer-events: none; }
+  .search input {
+    width: 100%; font: inherit; font-size: 15px; padding: 10px 44px 10px 38px; border-radius: 12px;
+    border: 1px solid var(--rule); background: var(--surface); color: var(--fg); box-shadow: var(--shadow);
+  }
+  .search input::placeholder { color: var(--muted); }
+  .search input:focus { outline: 2px solid var(--accent); outline-offset: 0; border-color: transparent; }
+  .search kbd {
+    position: absolute; right: 10px; font: 12px/1 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    color: var(--muted); border: 1px solid var(--rule); border-radius: 6px; padding: 4px 7px; background: var(--surface-2);
+  }
+  .search input:focus ~ kbd, .search input:not(:placeholder-shown) ~ kbd { display: none; }
+  @media (hover: none) { .search kbd { display: none; } .search input { padding-right: 36px; } }
+  .count { color: var(--muted); font-size: 14px; font-variant-numeric: tabular-nums; }
+
+  /* Sticky section nav */
+  .jump {
+    position: sticky; top: 0; z-index: 10; background: var(--glass);
+    -webkit-backdrop-filter: saturate(160%) blur(14px); backdrop-filter: saturate(160%) blur(14px);
+    border-bottom: 1px solid var(--rule);
+  }
+  .jump .wrap { display: flex; gap: 6px; overflow-x: auto; padding-top: 8px; padding-bottom: 8px; scrollbar-width: none; }
+  .jump .wrap::-webkit-scrollbar { display: none; }
+  .jump a {
+    flex: 0 0 auto; display: inline-flex; align-items: center; gap: 7px; padding: 7px 12px; border-radius: 999px;
+    font-size: 13.5px; color: var(--fg); text-decoration: none; border: 1px solid transparent; white-space: nowrap;
+    transition: background .15s ease, color .15s ease, opacity .15s ease;
+  }
+  .jump a:hover { background: var(--surface-2); }
+  .jump a[aria-current="true"] { background: var(--accent-soft); color: var(--accent); border-color: color-mix(in srgb, var(--accent) 25%, transparent); }
+  .jump a.dim { opacity: .4; }
+  .jump svg { width: 14px; height: 14px; }
+
+  /* Sections and cards */
+  main { padding: 6px 0 56px; }
+  section { padding-top: 30px; scroll-margin-top: 62px; }
+  .sec-head { display: flex; align-items: center; gap: 12px; margin: 0 0 14px; }
+  .sec-head .icon { width: 36px; height: 36px; border-radius: 11px; display: grid; place-items: center; background: var(--accent-soft); color: var(--accent); flex: none; }
+  .sec-head .icon svg { width: 20px; height: 20px; }
+  .sec-head h2 { font-size: 22px; letter-spacing: -.012em; margin: 0; }
+  .sec-head .n { color: var(--muted); font-size: 13px; margin-left: auto; font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 14px; }
+  .card {
+    background: var(--surface); border: 1px solid var(--rule); border-radius: 16px; padding: 16px 18px 14px;
+    box-shadow: var(--shadow); display: flex; flex-direction: column; gap: 8px;
+    transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+    animation: rise .5s cubic-bezier(.2, .7, .2, 1) backwards; animation-delay: calc(var(--i, 0) * 28ms);
+  }
+  .card:hover { transform: translateY(-2px); box-shadow: var(--shadow-hover); border-color: color-mix(in srgb, var(--accent) 30%, var(--rule)); }
+  .card h3 { font-size: 17px; margin: 0; line-height: 1.3; letter-spacing: -.005em; }
+  .card h3 a { color: var(--fg); text-decoration: none; }
+  .card h3 a:hover { color: var(--link); text-decoration: underline; }
+  .card h3 a::after { content: " ↗"; color: var(--muted); font-size: 13px; font-weight: 400; }
+  .card p { margin: 0; font-size: 15px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: auto; padding-top: 6px; }
+  .chip { display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; line-height: 1.3; padding: 4px 10px 4px 9px; border-radius: 999px; background: var(--chip-bg); color: var(--chip-fg); }
+  .chip svg { width: 12px; height: 12px; opacity: .85; flex: none; }
+  .chip.tag { background: var(--accent-soft); color: var(--accent); }
+  .chip.plain { background: transparent; border: 1px dashed var(--rule); color: var(--muted); }
+  @keyframes rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+  .empty { display: none; text-align: center; color: var(--muted); padding: 56px 0 24px; }
+  .empty.show { display: block; }
+  footer { color: var(--muted); font-size: 13px; border-top: 1px solid var(--rule); padding: 20px 0 44px; }
+  footer p { margin: 0 0 6px; }
+
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    .card, .jump a { animation: none; transition: none; }
+    .card:hover { transform: none; }
+  }
+
+  @media print {
+    .jump, .tools, .seg, .empty, .sec-head .n { display: none !important; }
+    body { background: #fff; color: #000; font-size: 12px; }
+    .hero { padding-top: 0; }
+    .grid { display: block; }
+    .card { break-inside: avoid; box-shadow: none; border: 1px solid #ccc; animation: none; margin: 0 0 8px; padding: 10px 12px; }
+    .card h3 { font-size: 13px; }
+    .card h3 a::after { content: attr(href); display: block; font-size: 9px; color: #555; font-weight: 400; word-break: break-all; margin-top: 2px; }
+    .chip.tag, .chip { background: none; border: 1px solid #ccc; color: #333; }
+    a { color: #000; }
+    .sec-head .icon { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<svg class="sprite" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+  <symbol id="i-mic" viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0"/><path d="M12 18v3"/><path d="M9 21h6"/></symbol>
+  <symbol id="i-motion" viewBox="0 0 24 24"><path d="M3 8c3-3 6-3 9 0s6 3 9 0"/><path d="M3 16c3-3 6-3 9 0s6 3 9 0"/></symbol>
+  <symbol id="i-speaker" viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M16.5 8.5a5 5 0 0 1 0 7"/><path d="M19 6a9 9 0 0 1 0 12"/></symbol>
+  <symbol id="i-scan" viewBox="0 0 24 24"><path d="M4 8V5a1 1 0 0 1 1-1h3"/><path d="M16 4h3a1 1 0 0 1 1 1v3"/><path d="M20 16v3a1 1 0 0 1-1 1h-3"/><path d="M8 20H5a1 1 0 0 1-1-1v-3"/><circle cx="12" cy="12" r="3"/></symbol>
+  <symbol id="i-switch" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="10" rx="5"/><circle cx="16" cy="12" r="3"/></symbol>
+  <symbol id="i-focus" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3.5"/><circle cx="12" cy="12" r="1" fill="currentColor"/></symbol>
+  <symbol id="i-sliders" viewBox="0 0 24 24"><path d="M4 7h9"/><path d="M18 7h2"/><circle cx="15.5" cy="7" r="2.2"/><path d="M4 17h2"/><path d="M11 17h9"/><circle cx="8.5" cy="17" r="2.2"/></symbol>
+  <symbol id="i-mag" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></symbol>
+  <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><path d="M12 8h.01"/></symbol>
+  <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></symbol>
+  <symbol id="i-moon" viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></symbol>
+  <symbol id="i-auto" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 4a8 8 0 0 1 0 16z" fill="currentColor"/></symbol>
+</svg>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="titlebar">
+      <div>
+        <p class="eyebrow">iPhone · Settings guide</p>
+        <h1>iPhone accessibility options</h1>
+      </div>
+      <div class="seg" role="group" aria-label="Theme">
+        <button type="button" data-theme="auto" aria-pressed="true"><svg><use href="#i-auto"/></svg>Auto</button>
+        <button type="button" data-theme="light" aria-pressed="false"><svg><use href="#i-sun"/></svg>Light</button>
+        <button type="button" data-theme="dark" aria-pressed="false"><svg><use href="#i-moon"/></svg>Dark</button>
+      </div>
+    </div>
+    <p class="note">Paths start in the Settings app. Titles link to Apple’s iPhone User Guide. A card tagged <span class="chip tag"><svg><use href="#i-info"/></svg>overview</span> links to the section page that lists the feature, because Apple has no page of its own for it.</p>
+    <div class="tools">
+      <label class="search">
+        <svg class="mag"><use href="#i-mag"/></svg>
+        <input id="q" type="search" placeholder="Filter features, e.g. voice, touch, captions" autocomplete="off" spellcheck="false" aria-label="Filter features">
+        <kbd>/</kbd>
+      </label>
+      <span class="count" id="count" aria-live="polite">22 features</span>
+    </div>
+  </div>
+</header>
+
+<nav class="jump" aria-label="Sections">
+  <div class="wrap">
+    <a href="#voice"><svg><use href="#i-mic"/></svg>Voice setup</a>
+    <a href="#motion"><svg><use href="#i-motion"/></svg>Motion</a>
+    <a href="#speech"><svg><use href="#i-speaker"/></svg>Read and speak</a>
+    <a href="#live"><svg><use href="#i-scan"/></svg>Live recognition and hearing</a>
+    <a href="#motor"><svg><use href="#i-switch"/></svg>Physical and motor</a>
+    <a href="#cognitive"><svg><use href="#i-focus"/></svg>Cognitive support and focus</a>
+  </div>
+</nav>
+
+<main class="wrap">
+
+<section id="voice">
+  <div class="sec-head"><span class="icon"><svg><use href="#i-mic"/></svg></span><h2>For the voice setup</h2><span class="n">4</span></div>
+  <div class="grid">
+    <article class="card">
+      <h3><a href="https://support.apple.com/guide/iphone/use-vocal-shortcuts-iph7f242ea2c/ios">Vocal Shortcuts</a></h3>
+      <p>Say your own phrase, such as “Over to Amber”, and it runs a Shortcut with no “Hey Siri” first. Audio is processed on the phone.</p>
+      <div class="chips"><span class="chip"><svg><use href="#i-sliders"/></svg>Settings › Accessibility › Vocal Shortcuts</span></div>
+    </article>
+    <article class="card">
+      <h3><a href="https://support.apple.com/guide/iphone/change-siri-accessibility-settings-iphaff1d606/ios">Siri Pause Time</a></h3>
+      <p>Default, Longer, or Longest, for how long Siri waits for you to finish. Longer stops it clipping names.</p>
+      <div class="chips"><span class="chip"><svg><use href="#i-sliders"/></svg>Settings › Accessibility › Siri</span></div>
+    </article>
+    <article class="card">
+      <h3><a href="https://support.apple.com/guide/iphone/overview-accessibility-features-mobility-iph76d37ce7d/ios">Back Tap</a></h3>
+      <p>Double or triple tap the back of the phone to run a feature or Shortcut.</p>
+      <div class="chips"><span class="chip"><svg><use href="#i-sliders"/></svg>Settings › Accessibility › Touch › Back Tap</span><span class="chip tag"><svg><use href="#i-info"/></svg>overview</span></div>
+    </article>
+    <article class="card">
+      <h3><a href="https://support.apple.com/en-mt/guide/iphone/iph3e2e31a5/ios">Accessibility Shortcut</a></h3>
+      <p>Triple-click the side button to toggle the features you pick.</p>
+      <div class="chips"><span class="chip"><svg><use href="#i-sliders"/></svg>Settings › Accessibility › Accessibility Shortcut</span></div>
+    </article>
+  </div>
+</section>
+
+<section id="motion">
+  <div class="sec-head"><span class="icon"><svg><use href="#i-motion"/></svg></span><h2>Motion</h2><span class="n">2</span></div>
+  <div class="grid">
+    <article class="card">
+      <h3>Reduce Motion</h3>
+      <p>Simpler animations and transitions; can pause moving images in Messages and Safari.</p>
+      <div class="chips"><span class="chip"><svg><use href="#i-sliders"/></svg>Settings › Accessibility › Motion</span><span class="chip plain">no Apple guide page</span></div>
+    </article>
+    <article class="card">
+      <h3><a href="https://support.apple.com/en-bh/guide/iphone/iph55564cb22/ios">Vehicle Motion Cues</a></h3>
+      <p>Dots at the screen edges that ease motion sickness as a passenger.</p>
+      <div class="chips"><span class="chip"><svg><use href="#i-sliders"/></svg>Settings › Accessibility › Motion</span></div>
+    </article>
+  </div>
+</section>
+
+<section id="speech">
+  <div class="sec-head"><span class="icon"><svg><use href="#i-speaker"/></svg></span><h2>Read and speak</h2><span class="n">3</span></div>
+  <div class="grid">
+    <article class="card">
+      <h3><a href="https://support.apple.com/guide/iphone/hear-whats-on-the-screen-or-typed-iph96b214f0/ios">Speak Screen, Speak Selection, typing feedback</a></h3>
+      <p>Swipe down with two fingers to hear the page, or select text and tap Speak. Voice, language, and rate are set here too.</p>
+      <div class="chips"><span class="chip"><svg><use href="#i-sliders"/></svg>Settings › Accessibility › Read &amp; Speak</span></div>
+    </article>
+    <article class="card">
+      <h3><a href="https://support.apple.com/guide/iphone/type-to-speak-iphcf92d2d9b/ios">Live Speech</a></h3>
+      <p>Type and the phone speaks it, in calls, FaceTime, or out loud; saves favorite phrases.</p>
+      <div class="chips"><span class="chip"><svg><use href="#i-sliders"/></svg>Settings › Accessibility › Live Speech</span></div>
+    </article>
+    <article class="card">
+      <h3><a href="https://support.apple.com/guide/iphone/overview-of-accessibility-features-for-speech-iph8b6c223ac/ios">All speech features</a></h3>
+      <p>Apple’s overview page for every speech feature on the phone.</p>
+      <div class="chips"><span class="chip tag"><svg><use href="#i-info"/></svg>overview</span></div>
+    </article>
+  </div>
+</section>
+
+<section id="live">
+  <div class="sec-head"><span class="icon"><svg><use href="#i-scan"/></svg></span><h2>Live recognition and hearing</h2><span class="n">4</span></div>
+  <div class="grid">
+    <article class="card">
+      <h3>Live Recognition</h3>
+      <p>The camera describes what’s around you: <a href="https://support.apple.com/guide/iphone/detect-text-read-loud-iph29dbe3fb6/ios">detect text and read it aloud</a>, <a href="https://support.apple.com/guide/iphone/detect-doors-people-and-furniture-around-you-iph35c335575/ios">detect doors, people, and furniture</a>, and set up <a href="https://support.apple.com/guide/iphone/set-up-shortcuts-for-live-recognition-ipheea9e5190/ios">Live Recognition shortcuts</a>.</p>
+      <div class="chips"><span class="chip"><svg><use href="#i-mag"/></svg>Magnifier app</span></div>
+    </article>
+    <article class="card">
+      <h3><a href="https://support.apple.com/guide/iphone/overview-accessibility-features-hearing-iphb210be03a/ios">Sound Recognition</a></h3>
+      <p>Alerts for 15 sounds such as doorbells and sirens; can learn your name or appliances. Apple says not to rely on it in emergencies.</p>
+      <div class="chips"><span class="chip"><svg><use href="#i-sliders"/></svg>Settings › Accessibility › Sound Recognition</span><span class="chip tag"><svg><use href="#i-info"/></svg>overview</span></div>
+    </article>
+    <article class="card">
+      <h3><a href="https://support.apple.com/guide/iphone/get-live-captions-of-spoken-audio-iphe0990f7bb/ios">Live Captions</a></h3>
+      <p>Captions any audio on the phone, including calls. iPhone 11 or later.</p>
+      <div class="chips"><span class="chip"><svg><use href="#i-sliders"/></svg>Settings › Accessibility › Live Captions</span></div>
+    </article>
+    <article class="card">
+      <h3><a href="https://support.apple.com/guide/iphone/play-music-as-taps-textures-and-more-iphff2ceeb16/ios">Music Haptics</a></h3>
+      <p>Taps synced to songs in Apple Music, Shazam, and some other apps; Full Mix or Vocals Only, three strengths.</p>
+      <div class="chips"><span class="chip"><svg><use href="#i-sliders"/></svg>Settings › Accessibility › Music Haptics</span></div>
+    </article>
+  </div>
+</section>
+
+<section id="motor">
+  <div class="sec-head"><span class="icon"><svg><use href="#i-switch"/></svg></span><h2>Physical and motor</h2><span class="n">4</span></div>
+  <div class="grid">
+    <article class="card">
+      <h3><a href="https://support.apple.com/guide/iphone/use-voice-control-iph2c21a3c88/ios">Voice Control</a></h3>
+      <p>Run the whole phone by voice (“tap Send”, numbered grids); works offline after a one-time download.</p>
+      <div class="chips"><span class="chip"><svg><use href="#i-sliders"/></svg>Settings › Accessibility › Voice Control</span></div>
+    </article>
+    <article class="card">
+      <h3><a href="https://support.apple.com/guide/iphone/use-assistivetouch-iph96b21954/ios">AssistiveTouch</a></h3>
+      <p>An on-screen menu for gestures and buttons, Dwell Control, mouse or trackpad pointers, and actions triggered by sounds like a mouth pop.</p>
+      <div class="chips"><span class="chip"><svg><use href="#i-sliders"/></svg>Settings › Accessibility › Touch › AssistiveTouch</span></div>
+    </article>
+    <article class="card">
+      <h3><a href="https://support.apple.com/en-us/119835">Switch Control</a></h3>
+      <p>Drive the phone with one or more switches, including Head Tracking with the front camera.</p>
+      <div class="chips"><span class="chip"><svg><use href="#i-sliders"/></svg>Settings › Accessibility › Switch Control</span></div>
+    </article>
+    <article class="card">
+      <h3><a href="https://support.apple.com/guide/iphone/overview-accessibility-features-mobility-iph76d37ce7d/ios">Eye Tracking, Touch Accommodations, and the rest</a></h3>
+      <p>Apple’s mobility overview, which lists Eye Tracking, Touch Accommodations and the other physical and motor features.</p>
+      <div class="chips"><span class="chip"><svg><use href="#i-sliders"/></svg>Settings › Accessibility › Physical and Motor</span><span class="chip tag"><svg><use href="#i-info"/></svg>overview</span></div>
+    </article>
+  </div>
+</section>
+
+<section id="cognitive">
+  <div class="sec-head"><span class="icon"><svg><use href="#i-focus"/></svg></span><h2>Cognitive support and focus</h2><span class="n">5</span></div>
+  <div class="grid">
+    <article class="card">
+      <h3><a href="https://support.apple.com/guide/iphone/get-started-with-accessibility-features-iph3e2e4367/ios">Assistive Access</a></h3>
+      <p>A simplified phone with big buttons and only the apps you choose.</p>
+      <div class="chips"><span class="chip"><svg><use href="#i-sliders"/></svg>Settings › Accessibility › Assistive Access</span><span class="chip tag"><svg><use href="#i-info"/></svg>overview</span></div>
+    </article>
+    <article class="card">
+      <h3><a href="https://support.apple.com/guide/iphone/guided-access-iph7fad0d10/ios">Guided Access</a></h3>
+      <p>Locks the phone to one app, with screen areas, buttons, or time limits restricted.</p>
+      <div class="chips"><span class="chip"><svg><use href="#i-sliders"/></svg>Settings › Accessibility › Guided Access</span></div>
+    </article>
+    <article class="card">
+      <h3><a href="https://support.apple.com/guide/iphone/adjust-iphone-display-and-text-settings-iphd6804774e/ios">Display &amp; Text Size</a></h3>
+      <p>Bold or larger text, button shapes, on/off labels.</p>
+      <div class="chips"><span class="chip"><svg><use href="#i-sliders"/></svg>Settings › Accessibility › Display &amp; Text Size</span></div>
+    </article>
+    <article class="card">
+      <h3><a href="https://support.apple.com/guide/iphone/set-up-a-focus-iphd6288a67f/ios">Focus</a></h3>
+      <p>Hide everything except what the current task needs.</p>
+      <div class="chips"><span class="chip"><svg><use href="#i-sliders"/></svg>Settings › Focus</span></div>
+    </article>
+    <article class="card">
+      <h3>Background Sounds</h3>
+      <p>Rain or steady noise to cover distractions.</p>
+      <div class="chips"><span class="chip"><svg><use href="#i-sliders"/></svg>Settings › Accessibility › Audio &amp; Visual</span><span class="chip plain">no Apple guide page</span></div>
+    </article>
+  </div>
+</section>
+
+<p id="empty" class="empty">No features match. Try a shorter word, or clear the filter.</p>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <p>Links go to Apple’s iPhone User Guide on support.apple.com. Press <kbd>/</kbd> to filter, <kbd>Esc</kbd> to clear; the filter is kept in the page address, so a filtered view can be bookmarked.</p>
+    <p>Compiled 8 November 2026.</p>
+  </div>
+</footer>
+
+<noscript><style>.tools, .seg { display: none !important; }</style></noscript>
+<script>
+(() => {
+  const root = document.documentElement;
+  const params = new URLSearchParams(location.search);
+
+  // Theme: Auto follows the system; Light and Dark are remembered on this device.
+  const THEMES = ['auto', 'light', 'dark'];
+  const segButtons = [...document.querySelectorAll('.seg button[data-theme]')];
+  const applyTheme = (t, persist) => {
+    if (!THEMES.includes(t)) t = 'auto';
+    if (t === 'auto') root.removeAttribute('data-theme'); else root.dataset.theme = t;
+    segButtons.forEach(b => b.setAttribute('aria-pressed', String(b.dataset.theme === t)));
+    if (persist) { try { localStorage.setItem('theme', t); } catch (e) {} }
+  };
+  let stored = null;
+  try { stored = localStorage.getItem('theme'); } catch (e) {}
+  const urlTheme = params.get('theme');
+  applyTheme(THEMES.includes(urlTheme) ? urlTheme : (stored || 'auto'), false);
+  segButtons.forEach(b => b.addEventListener('click', () => applyTheme(b.dataset.theme, true)));
+
+  // Filter
+  const input = document.getElementById('q');
+  const cards = [...document.querySelectorAll('.card')];
+  const sections = [...document.querySelectorAll('main section')];
+  const count = document.getElementById('count');
+  const empty = document.getElementById('empty');
+  const navLinks = [...document.querySelectorAll('.jump a')];
+  const total = cards.length;
+  cards.forEach((c, i) => {
+    c.style.setProperty('--i', i);
+    c.dataset.text = c.textContent.replace(/\s+/g, ' ').toLowerCase();
+  });
+  let urlTimer;
+  const apply = () => {
+    const q = input.value.trim().toLowerCase();
+    let shown = 0;
+    cards.forEach(c => {
+      const hit = !q || c.dataset.text.includes(q);
+      c.hidden = !hit;
+      if (hit) shown++;
+    });
+    sections.forEach(s => {
+      const all = s.querySelectorAll('.card').length;
+      const n = s.querySelectorAll('.card:not([hidden])').length;
+      s.hidden = n === 0;
+      s.querySelector('.n').textContent = q ? n + ' of ' + all : String(all);
+      const link = navLinks.find(a => a.getAttribute('href') === '#' + s.id);
+      if (link) link.classList.toggle('dim', n === 0);
+    });
+    count.textContent = q ? shown + ' of ' + total + ' features match' : total + ' features';
+    empty.classList.toggle('show', shown === 0);
+    clearTimeout(urlTimer);
+    urlTimer = setTimeout(() => {
+      try {
+        const u = new URL(location.href);
+        if (q) u.searchParams.set('q', input.value.trim()); else u.searchParams.delete('q');
+        history.replaceState(null, '', u);
+      } catch (e) {}
+    }, 250);
+  };
+  input.value = params.get('q') || '';
+  input.addEventListener('input', apply);
+  input.addEventListener('keydown', e => { if (e.key === 'Escape') { input.value = ''; apply(); } });
+  document.addEventListener('keydown', e => {
+    if (e.key === '/' && !/^(INPUT|TEXTAREA)$/.test(document.activeElement.tagName)) { e.preventDefault(); input.focus(); input.select(); }
+  });
+  apply();
+
+  // Highlight the section currently under the sticky bar.
+  const setActive = id => navLinks.forEach(a => {
+    if (a.getAttribute('href') === '#' + id) a.setAttribute('aria-current', 'true'); else a.removeAttribute('aria-current');
+  });
+  setActive(sections[0].id);
+  if ('IntersectionObserver' in window) {
+    const visible = new Set();
+    const io = new IntersectionObserver(entries => {
+      entries.forEach(e => e.isIntersecting ? visible.add(e.target.id) : visible.delete(e.target.id));
+      const first = sections.find(s => visible.has(s.id) && !s.hidden);
+      if (first) setActive(first.id);
+    }, { rootMargin: '-64px 0px -55% 0px' });
+    sections.forEach(s => io.observe(s));
+  }
+})();
+</script>
+</body>
+</html>
