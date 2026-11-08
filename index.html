@@ -470,12 +470,25 @@
   setActive(sections[0].id);
   if ('IntersectionObserver' in window) {
     const visible = new Set();
+    const pick = () => {
+      const shown = sections.filter(s => !s.hidden);
+      if (!shown.length) return;
+      // Prefer the first shown section inside the zone below the sticky bar. When none is there
+      // (scrolled back up to the hero, or in a gap on a short screen), fall back to the last
+      // shown section whose top has passed the bar, or the first section when above them all.
+      let current = shown.find(s => visible.has(s.id));
+      if (!current) {
+        current = shown[0];
+        for (const s of shown) { if (s.getBoundingClientRect().top <= 65) current = s; }
+      }
+      setActive(current.id);
+    };
     const io = new IntersectionObserver(entries => {
       entries.forEach(e => e.isIntersecting ? visible.add(e.target.id) : visible.delete(e.target.id));
-      const first = sections.find(s => visible.has(s.id) && !s.hidden);
-      if (first) setActive(first.id);
+      pick();
     }, { rootMargin: '-64px 0px -55% 0px' });
     sections.forEach(s => io.observe(s));
+    window.addEventListener('scroll', () => { if (!visible.size) pick(); }, { passive: true });
   }
 })();
 </script>
